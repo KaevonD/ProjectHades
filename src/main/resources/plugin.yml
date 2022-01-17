@@ -4,3 +4,8 @@ main: me.jnk.projecthades.ProjectHades
 api-version: 1.18
 authors: [ jjrryyaa, NateLum, KaevonD ]
 description: Roguelike in Minecraft
+commands:
+  party:
+    description: party commands
+    usage: /<command>
+    aliases: p
