@@ -30,29 +30,55 @@ public class PartyCommands implements CommandExecutor {
 
         if(cmd.getName().equalsIgnoreCase("party")) {
             if(args.length == 0) {
-                sender.sendMessage("/party help for a list of party commands");
+                sender.sendMessage("/party help for a list of party commands.");
             }
             else if(args[0].equals("invite")) {
                 if(args.length == 1) {
-                    sender.sendMessage("please specify a player");
+                    sender.sendMessage("Please specify a player.");
                 }
-                else if(args[2].equals(sender.getName())) {
-                    sender.sendMessage("You can not add yourself to a party");
+                else if(args[1].equals(sender.getName())) {
+                    sender.sendMessage("You can not add yourself to a party.");
                 }
                 else{
                     for(Player p : Bukkit.getOnlinePlayers()) {
-                        if(p.getName().equals(args[2])) {
+                        if(p.getName().equals(args[1])) {
                             if(party.contains(p)) {
-                                sender.sendMessage("That player is already in your party");
+                                sender.sendMessage("That player is already in your party.");
                             }
                             else{
                                 party.add(p);
-                                sender.sendMessage("added player to party");
+                                sender.sendMessage("Invited " + p.getName() + " to party.");
+                                p.sendMessage(sender.getName() + " has invited you to their party.");
                             }
                         }
                     }
                 }
 
+            }
+            else if(args[0].equals("kick")) {
+                if(args.length == 1) {
+                    sender.sendMessage("please specify a player");
+                }
+                else if(args[1].equals(sender.getName())) {
+                    sender.sendMessage("You can not kick yourself. Do /party leave.");
+                }
+                else{
+                    for(Player p : Bukkit.getOnlinePlayers()) {
+                        if(p.getName().equals(args[1])) {
+                            if(party.contains(p)) {
+                                party.remove(p);
+                                sender.sendMessage("Removed " + p.getName() + " from party.");
+                                p.sendMessage("You have been removed from the party");
+                            }
+                        }
+                    }
+                }
+            }
+            else if(args[0].equals("list")) {
+                sender.sendMessage("Party Members:");
+                for(Player p : party) {
+                    sender.sendMessage(p.getName());
+                }
             }
             return true;
         }
