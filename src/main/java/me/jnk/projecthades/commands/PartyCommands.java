@@ -9,9 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PartyCommands implements CommandExecutor {
 
     boolean isOnline(String name) {
@@ -55,6 +52,11 @@ public class PartyCommands implements CommandExecutor {
                     if(isOnline(args[1])) {
                         PlayerInfo invited = listen.getPlayer(args[1]);
 
+                        if(invited.getInvites().contains(callerInfo.getName())) {
+                            pCaller.sendMessage("You have already invited this player.");
+                            return true;
+                        }
+
                         invited.addInvite(callerInfo);
                         pCaller.sendMessage("Invited " + args[1] + " to party.");
                         invited.getPlayer().sendMessage(pCaller.getName() + " has invited you to their party.");
@@ -91,6 +93,9 @@ public class PartyCommands implements CommandExecutor {
                     for(PlayerInfo list : callerInfo.getPartyMembers()) {
                         pCaller.sendMessage(list.getName());
                     }
+                }
+                else{
+                    pCaller.sendMessage("You are not in a party.");
                 }
 
 
@@ -132,12 +137,16 @@ public class PartyCommands implements CommandExecutor {
                                     inviter.addPartyMember(inviter);
                                     inviter.addPartyMember(callerInfo);
                                 }
+                                pCaller.sendMessage("Joined " + inviter.getName() + "'s party.");
+                                inviter.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
+                                return true;
                             }
                         }
+                        pCaller.sendMessage("That player did not invite you.");
 
                     }
                     else {
-                        pCaller.sendMessage("That player is ");
+                        pCaller.sendMessage("That player is not online.");
                     }
                 }
             }

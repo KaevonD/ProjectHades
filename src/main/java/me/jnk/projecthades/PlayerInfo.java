@@ -9,16 +9,28 @@ import java.util.UUID;
 
 public class PlayerInfo {
 
-    private String name;        // Player's name
-    private final UUID id;      // Player's UUID
-    private Boolean inParty;    // If player is in a party or not
-    private Boolean inGame;     // If player is in a game or not
+    private String name;            // Player's name
+    private final UUID id;          // Player's UUID
+
+    private Boolean inParty;        // If player is in a party or not
+    private Boolean inGame;         // If player is in a game or not
+    private Boolean isPartyLeader;  // If player is the party leader or not
+
     private List<PlayerInfo> invites = new ArrayList<>();       // List of players that invited them to a party
     private List<PlayerInfo> partyMembers = new ArrayList<>();  // List of party members, empty if player is not in party
+
+    public Boolean getPartyLeader() {
+        return isPartyLeader;
+    }
+
+    public void setPartyLeader(Boolean partyLeader) {
+        isPartyLeader = partyLeader;
+    }
 
     public PlayerInfo(String name, UUID id) {
         this.name = name;
         this.id = id;
+        this.inParty = false;
     }
 
     public void setName(String name) {
