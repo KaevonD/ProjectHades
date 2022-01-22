@@ -31,6 +31,8 @@ public class PlayerInfo {
         this.name = name;
         this.id = id;
         this.inParty = false;
+        this.inGame = false;
+        this.isPartyLeader = false;
     }
 
     public void setName(String name) {
@@ -75,6 +77,10 @@ public class PlayerInfo {
 
     public List<PlayerInfo> getPartyMembers() {
         return partyMembers;
+    }
+
+    public void setPartyMembers(List<PlayerInfo> partyMembers) {
+        this.partyMembers = partyMembers;
     }
 
     public void addPartyMember(PlayerInfo player) {

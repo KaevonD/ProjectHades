@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+
 public class PartyCommands implements CommandExecutor {
 
     boolean isOnline(String name) {
@@ -38,9 +40,13 @@ public class PartyCommands implements CommandExecutor {
             if(args.length == 0) {
                 pCaller.sendMessage("/party help for a list of party commands.");
             }
+
             else if(args[0].equals("invite")) { // party invite commands
                 if(args.length == 1) {
                     pCaller.sendMessage("Please specify a player.");
+                }
+                else if(!callerInfo.getPartyLeader() && callerInfo.getInParty()) {
+                    pCaller.sendMessage("Only the party leader can invite other players.");
                 }
                 else if(args[1].equals(pCaller.getName())) {
                     pCaller.sendMessage("You can not add yourself to a party.");
@@ -52,7 +58,7 @@ public class PartyCommands implements CommandExecutor {
                     if(isOnline(args[1])) {
                         PlayerInfo invited = listen.getPlayer(args[1]);
 
-                        if(invited.getInvites().contains(callerInfo.getName())) {
+                        if(invited.getInvites().contains(callerInfo)) {
                             pCaller.sendMessage("You have already invited this player.");
                             return true;
                         }
@@ -64,11 +70,13 @@ public class PartyCommands implements CommandExecutor {
                         return true;
                     }
                     pCaller.sendMessage("That player is not online.");
+                    return true;
                 }
             }
+
             else if(args[0].equals("kick") || args[0].equals("remove")) {
                 if(args.length == 1) {
-                    pCaller.sendMessage("please specify a player.");
+                    pCaller.sendMessage("Please specify a player.");
                 }
                 else if(args.length > 2) {
                     pCaller.sendMessage("Please only specify one player to remove from your party.");
@@ -76,17 +84,32 @@ public class PartyCommands implements CommandExecutor {
                 else if(!callerInfo.getInParty()){
                     pCaller.sendMessage("You are not in a party.");
                 }
+                else if(!callerInfo.getPartyLeader()) {
+                    pCaller.sendMessage("Only the party leader may kick players from the party.");
+                }
                 else if(args[1].equals(pCaller.getName())) {
                     pCaller.sendMessage("You can not kick yourself. Do /party leave.");
                 }
-//                else{
-////                    for(PlayerInfo p : callerInfo.getPartyMembers()) {
-////                        if(p.getName().equals(args[1])) {
-////                            p.removePartyMember();
-////                        }
-////                    }
-//                }
+                else {
+                    PlayerInfo playerKicked = listen.getPlayer(args[1]);
+
+                    if(!callerInfo.getPartyMembers().contains(playerKicked) || playerKicked == null) {
+                        pCaller.sendMessage("This player is not in your party.");
+                        return true;
+                    }
+
+                    callerInfo.removePartyMember(playerKicked);
+                    playerKicked.setInParty(false);
+                    playerKicked.setPartyMembers(null);
+                    playerKicked.getPlayer().sendMessage("You were kicked from the party.");
+
+                    for(PlayerInfo partyMember : callerInfo.getPartyMembers()) {
+                        partyMember.getPlayer().sendMessage(playerKicked.getName() + " was kicked from party.");
+                    }
+
+                }
             }
+
             else if(args[0].equals("list")) {
                 if(callerInfo.getInParty()) {
                     pCaller.sendMessage("Party Members:");
@@ -97,10 +120,9 @@ public class PartyCommands implements CommandExecutor {
                 else{
                     pCaller.sendMessage("You are not in a party.");
                 }
-
-
             }
-            else if(args[0].equals("accept")) {
+
+            else if(args[0].equals("accept") || args[0].equals("join")) {
                 if(args.length == 1) {
                     pCaller.sendMessage("Please specify which players invite you want to accept.");
                 }
@@ -118,27 +140,27 @@ public class PartyCommands implements CommandExecutor {
 
                         for(PlayerInfo p : callerInfo.getInvites()) {
 
-                            if(p.getId().equals(inviter.getId())){
+                            if(p.equals(inviter)){
                                 callerInfo.setInParty(true);
                                 callerInfo.removeInvite(inviter);
-                                callerInfo.addPartyMember(inviter);
-                                callerInfo.addPartyMember(callerInfo);
 
                                 if(inviter.getInParty()) {
+                                    System.out.println("ooga booga");
                                     for(PlayerInfo pMember : inviter.getPartyMembers()) {
-                                        if(!pMember.getId().equals(callerInfo.getId())){
-                                            callerInfo.addPartyMember(pMember);
-                                            pMember.addPartyMember(callerInfo);
-                                        }
+                                        pMember.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
                                     }
                                 }
-                                else {
+                                else{
+                                    inviter.setPartyLeader(true);
                                     inviter.setInParty(true);
                                     inviter.addPartyMember(inviter);
-                                    inviter.addPartyMember(callerInfo);
+                                    inviter.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
                                 }
+
+
+                                inviter.addPartyMember(callerInfo);
+                                callerInfo.setPartyMembers(inviter.getPartyMembers());
                                 pCaller.sendMessage("Joined " + inviter.getName() + "'s party.");
-                                inviter.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
                                 return true;
                             }
                         }
@@ -149,6 +171,37 @@ public class PartyCommands implements CommandExecutor {
                         pCaller.sendMessage("That player is not online.");
                     }
                 }
+            }
+            else if(args[0].equals("leave")) {
+
+                if(callerInfo.getInParty()) {
+
+                    if(callerInfo.getPartyLeader()) {   // If the player that left is the party leader
+                        if(callerInfo.getPartyMembers().size() > 1) {
+                            PlayerInfo newLeader = callerInfo.getPartyMembers().get(1);
+                            newLeader.setPartyLeader(true);
+                            newLeader.getPlayer().sendMessage("You are now the leader of the party");
+                        }
+                    }
+
+                    for (PlayerInfo pMember : callerInfo.getPartyMembers()) {
+                        if (!pMember.equals(callerInfo)) {
+                            pMember.getPlayer().sendMessage(callerInfo.getName() + " has left the party");
+                        }
+                    }
+                    callerInfo.removePartyMember(callerInfo);
+                    callerInfo.setPartyMembers(null);
+                    callerInfo.setInParty(false);
+
+                    pCaller.sendMessage("You have left the party.");
+
+                }
+                else{
+                    pCaller.sendMessage("You are not in a party.");
+                }
+            }
+            else {
+                pCaller.sendMessage("Unknown command. Do /party help for a list of party commands.");
             }
         }
         return true;
