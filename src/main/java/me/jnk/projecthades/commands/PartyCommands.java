@@ -193,11 +193,12 @@ public class PartyCommands implements CommandExecutor {
                                     // Add the inviter to the party
                                     inviter.addPartyMember(inviter);
 
+                                    inviter.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
+
                                 }
 
                                 // Add the player who accepted the invite to the party
                                 inviter.addPartyMember(callerInfo);
-                                inviter.getPlayer().sendMessage(pCaller.getName() + " joined your party.");
                                 callerInfo.setPartyMembers(inviter.getPartyMembers());
                                 pCaller.sendMessage("Joined " + inviter.getName() + "'s party.");
                                 return true;
@@ -225,6 +226,7 @@ public class PartyCommands implements CommandExecutor {
                             newLeader.setPartyLeader(true);
                             newLeader.getPlayer().sendMessage("You are now the leader of the party");
                         }
+                        callerInfo.setPartyLeader(false);
                     }
 
                     for (PlayerInfo pMember : callerInfo.getPartyMembers()) {
