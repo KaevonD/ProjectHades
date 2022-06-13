@@ -9,6 +9,7 @@ public final class ProjectHades extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new MyListener(), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(), this);
 
         getCommand("party").setExecutor(new PartyCommands());
     }
