@@ -5,8 +5,6 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,11 +36,11 @@ public class Demeter implements God {
                 .asGuiItem();
         blessing2 = ItemBuilder.from(Material.BOOK)
                 .name(Component.text("Blessing1"))
-                .lore(blessing1lore)
+                .lore(blessing2lore)
                 .asGuiItem();
         blessing3 = ItemBuilder.from(Material.BOOK)
                 .name(Component.text("Blessing1"))
-                .lore(blessing1lore)
+                .lore(blessing3lore)
                 .asGuiItem();
 
         blessings.add(blessing1);
