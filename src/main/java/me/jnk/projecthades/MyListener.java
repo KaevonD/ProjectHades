@@ -38,10 +38,10 @@ public class MyListener implements Listener {
     File[] files = dir.listFiles();
     static List<PlayerInfo> onlinePlayers = new ArrayList<>();
 
-    public PlayerInfo getPlayer(String name) {
-        for(PlayerInfo pi : onlinePlayers) {
-            if(pi.getName().equals(name)) {
-                return pi;
+    public static PlayerInfo getPlayer(String name) {
+        for(PlayerInfo pInfo : onlinePlayers) {
+            if(pInfo.getName().equals(name)) {
+                return pInfo;
             }
         }
         return null;
@@ -50,7 +50,6 @@ public class MyListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-
         boolean hasJoined = false;
 
 
@@ -64,11 +63,6 @@ public class MyListener implements Listener {
         if(!hasJoined) {
             onlinePlayers.add(new PlayerInfo(e.getPlayer().getName(), e.getPlayer().getUniqueId()));
         }
-
-    }
-
-    @EventHandler
-    public void onMovement(PlayerMoveEvent e) {
 
     }
 

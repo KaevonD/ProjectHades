@@ -9,3 +9,7 @@ commands:
     description: party commands
     usage: /<command>
     aliases: p
+  spawn:
+    description: spawn mobs
+    usage: /<command>
+    aliases: s

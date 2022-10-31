@@ -19,6 +19,7 @@ public class PlayerInfo {
     private List<PlayerInfo> invites = new ArrayList<>();       // List of players that invited them to a party
     private List<PlayerInfo> partyMembers = new ArrayList<>();  // List of party members, empty if player is not in party
 
+    private PlayerStats playerStats;
     public Boolean getPartyLeader() {
         return isPartyLeader;
     }
@@ -33,6 +34,7 @@ public class PlayerInfo {
         this.inParty = false;
         this.inGame = false;
         this.isPartyLeader = false;
+        this.playerStats = new PlayerStats();
     }
 
     public void setName(String name) {
@@ -49,6 +51,14 @@ public class PlayerInfo {
 
     public Boolean getInParty() {
         return inParty;
+    }
+
+    public PlayerStats getPlayerStats() {
+        return playerStats;
+    }
+
+    public void setPlayerStats(PlayerStats playerStats) {
+        this.playerStats = playerStats;
     }
 
     public void setInParty(Boolean inParty) {

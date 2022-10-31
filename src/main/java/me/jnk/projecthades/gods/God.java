@@ -1,10 +1,9 @@
 package me.jnk.projecthades.gods;
 
 import dev.triumphteam.gui.guis.GuiItem;
-
-import java.util.List;
+import org.bukkit.entity.HumanEntity;
 
 public interface God {
     GuiItem getGod();
-    List<GuiItem> getBlessings();
+    void getBlessings(HumanEntity player);
 }
