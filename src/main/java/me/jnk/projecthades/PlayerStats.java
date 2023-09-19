@@ -6,7 +6,7 @@ public class PlayerStats {
     private int damage;
 
     public PlayerStats() {
-        health = 10;
+        health = 100;
         damage = 100;
     }
 

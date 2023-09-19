@@ -1,34 +1,13 @@
 package me.jnk.projecthades;
 
-import me.jnk.projecthades.enemies.Bob;
-import me.jnk.projecthades.enemies.Enemy;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.metadata.MetadataValue;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DamageListener implements Listener {
-    ArrayList<Enemy> enemies = new ArrayList<>();
-
-    private int enemyIndex(Object type) {
-        for(int i = 0; i < enemies.size(); i++) {
-            if(enemies.get(0).getType().equals(type)){
-                return i;
-            }
-        }
-        System.out.println("Enemy not found");
-        return 0;
-    }
-
-    public DamageListener() {
-        enemies.add(new Bob());
-    }
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {
@@ -39,27 +18,16 @@ public class DamageListener implements Listener {
 
                 if(!(e.getEntity() instanceof ArmorStand)) {
                     ((LivingEntity)e.getEntity()).damage(dmg);
-
                 }
 
                 System.out.println("Damage: " + dmg);
-            }
-            else{
-                List<MetadataValue> values = e.getDamager().getMetadata("type");
-                Object type = values.get(0).value();
-                System.out.println(type);
-                double dmg = enemies.get(enemyIndex(type)).getDamage();
-                ((LivingEntity)e.getEntity()).damage(dmg);
-
-
+                e.setCancelled(true);
             }
 
-            e.setCancelled(true);
         }
         else{
             System.out.println("was not done by mob");
         }
-
 
 
     }
